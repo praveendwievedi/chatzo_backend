@@ -26,12 +26,13 @@ const userSchema=new Schema({
         // toLowerCse:true,
         trim:true,
         // index:true
-    },
-    phoneNumber:{
-        type:Number,
-        required:true,
-        index:true
-    },
+    }
+    ,
+    // phoneNumber:{
+    //     type:Number,
+    //     required:true,
+    //     index:true
+    // },
     password:{
         type:String,
         required:[true,"password required"],
