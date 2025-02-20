@@ -46,14 +46,18 @@ const userSchema=new Schema({
     friends:{
         type:Schema.Types.ObjectId,
         ref:"User"
+    },
+    refreshToken:{
+        type:String,
     }
 },{timestamps:true})
 
-userSchema.pre("save",async function(next){
-    if(!this.isModified("password"))return next();
-
-    this.password=await bcrypt.hash(this.password,12)
-    next()
+userSchema.pre("save",async function(){
+    if(!this.isModified("password")){
+        return next();
+    }
+    this.password=await bcrypt.hash(this.password,12);
+    next();
 })
 
 userSchema.methods.isPasswordCorrect=async function(password){
@@ -70,6 +74,7 @@ userSchema.methods.generateToken=function(){
         process.env.JWT_SECRET
     )
 }
+
 
 export const User=new mongoose.model("User",userSchema)
 
