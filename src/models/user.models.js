@@ -39,10 +39,10 @@ const userSchema=new Schema({
     },
     bio:{
         type:String,
+        default:""
     },
     avatar:{
-        type:String,
-        // default:
+        type:String
     },
     friends:{
         type:Schema.Types.ObjectId,
@@ -65,17 +65,34 @@ userSchema.methods.isPasswordCorrect=async function(password){
     return await bcrypt.compare(password,this.password);
 }
 
-userSchema.methods.generateToken=function(){
+userSchema.methods.generateRefreshToken=function(){
+    return jwt.sign(
+        {
+            _id:this._id,
+        },
+        process.env.JWT_SECRET,
+        {
+            expiresIn:process.env.REFRESH_TOKEN_EXPIRY
+        }
+    )
+}
+userSchema.methods.generateAccessToken=function(){
     return jwt.sign(
         {
             _id:this._id,
             userName:this.userName,
             email:this.email,
         },
-        process.env.JWT_SECRET
+        process.env.JWT_SECRET,
+        {
+            expiresIn:process.env.ACCESS_TOKEN_EXPIRY
+        }
     )
 }
 
-
+userSchema.methods.toJSON= function(){
+    const {email,userName,fullName,avatar,bio}=this.toObject();
+    return {email,userName,fullName,avatar,bio}
+}
 export const User=new mongoose.model("User",userSchema)
 
